@@ -1,0 +1,22 @@
+{
+    "rules": [
+        {
+            "name": "Rule 1",
+            "conditions": {
+                "operator": "ALL",
+                "rules": [
+                    {
+                        "field": "from_email",
+                        "predicate": "Contains",
+                        "value": "roanuz"
+                    }
+                ]
+            },
+            "actions": [
+                {
+                    "type": "move_message"
+                }
+            ]
+        }
+    ]
+}

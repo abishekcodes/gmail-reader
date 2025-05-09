@@ -1,0 +1,23 @@
+{
+    "rules": [
+        {
+            "name": "Rule 1",
+            "conditions": {
+                "operator": "ALL",
+                "rules": [
+                    {
+                        "field": "from_email",
+                        "predicate": "GreaterThan",
+                        "value": "roanuz"
+                    }
+                ]
+            },
+            "actions": [
+                {
+                    "type": "move_message",
+                    "folder": "SPAM"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,93 @@
+{
+  "rules": [
+    {
+      "name": "Move messages from zoconnor@example.com",
+      "conditions": {
+        "operator": "ALL",
+        "rules": [
+          {
+            "field": "from_email",
+            "predicate": "Equals",
+            "value": "zoconnor@example.com"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "type": "move_message",
+          "folder": "SPAM"
+        }
+      ]
+    },
+    {
+      "name": "Mark messages with 'Consider' in subject as read",
+      "conditions": {
+        "operator": "ALL",
+        "rules": [
+          {
+            "field": "subject",
+            "predicate": "Contains",
+            "value": "Consider"
+          },
+          {
+            "field": "from_email",
+            "predicate": "Contains",
+            "value": "example.net"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "type": "mark_as_read"
+        }
+      ]
+    },
+    {
+      "name": "Archive messages from example.org before 2025-02-14T04:52:12+05:30",
+      "conditions": {
+        "operator": "ALL",
+        "rules": [
+          {
+            "field": "date",
+            "predicate": "LessThan",
+            "value": "2024-05-08T20:08:54"
+          },
+          {
+            "field": "from_email",
+            "predicate": "Contains",
+            "value": "example.org"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "type": "move_message",
+          "folder": "TRASH"
+        }
+      ]
+    },
+    {
+      "name": "Email from 'example.org' or containing 'Whether'",
+      "conditions": {
+        "operator": "ANY",
+        "rules": [
+          {
+            "field": "from_email",
+            "predicate": "Contains",
+            "value": "example.org"
+          },
+          {
+            "field": "body",
+            "predicate": "Contains",
+            "value": "Whether"
+          }
+        ]
+      },
+      "actions": [
+        {
+          "type": "mark_as_unread"
+        }
+      ]
+    }
+  ]
+}
