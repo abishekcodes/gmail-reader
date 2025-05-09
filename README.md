@@ -1,0 +1,61 @@
+# Google Rest API Setup
+
+### Create An Project in GCP
+https://console.cloud.google.com/projectcreate
+
+### Create Your OAuth Client
+1. Head over to [OAuth Client Page](https://console.cloud.google.com/auth/clients)
+2. Click on Create Client
+![alt text](email_reader/assets/oauth-client-create-1.png)
+3. Select Application Type as Desktop App and Name Your File as Email Reader
+4. Click Ok
+5. In The Popup that appears Click on Download JSON to download the secrets file, Rename the file as credentials.json and store it in your computer
+![alt text](email_reader/assets/oauth-client-create-2.png)
+
+
+### Enable the Gmail API for Your Google Cloud Application
+1. Head over to the [gmail api page](https://console.cloud.google.com/marketplace/product/google/gmail.googleapis.com) and click enable
+2. Come back to your [gcp console](https://console.cloud.google.com/auth/scopes)
+3. Click on Data Access Tab
+4. Click Add Or Remove Scopes Button
+5. In Filter Type Gmail API and Select the Read Only Permissions
+6. Scroll Down to Restricted Scopes Section and Click on Save
+   
+![alt text](email_reader/assets/oauth-client-create-3.png)
+
+### Add Test User
+1. Click on Audience
+2. Scroll Down and go to the Test Users Section and 3. Click on Add Users
+4. Enter Your Email ID and Click Save
+![alt text](email_reader/assets/oauth-client-create-4.png)
+
+
+# Setting Up The Project
+
+### Install Required Dependencies
+```
+pip install .
+```
+
+# Using the Functionalities
+### Loading Emails
+You can load emails from gmail by running the following command
+```bash
+load-emails -c /path/to/credentials-file/credentails.json
+```
+Credentials file is the file which you downloaded during GCP Client Creation (Create Your OAuth Client - Step 5)
+
+
+### Manage Emails
+### Defining Your Rules File
+
+You can apply the rules file and manage emails using the following command
+Read more on how to define the rules file [Here](Rules.md)
+
+You can also have a look at the sample rules file defined at tests/static folder
+
+To Use the functionality
+
+```bash
+manage-emails -c /path/to/credentials-file/credentails.json -r /path/to/rules-file.json
+```
