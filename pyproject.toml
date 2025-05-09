@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "email_reader"
+version = "0.1.0"
+description = "Email Manager"
+authors = [
+    {name = "Abishek Mosesraj"}
+]
+requires-python = ">=3.10"
+dependencies = [
+    "google-api-python-client",
+    "google-auth-httplib2",
+    "google-auth-oauthlib",
+    "sqlalchemy",
+    "rich",
+    "pydantic==2.11.4"
+]
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "google-api-python-client-stubs"
+]
+
+[project.scripts]
+load-emails = "email_reader.loader:run"
+manage-emails = "email_reader.manager:run"
+
+[tool.setuptools.packages.find]
+include = ["email_reader*"]
+exclude = ["*tests*"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+
+[tool.ruff]
+line-length = 120
