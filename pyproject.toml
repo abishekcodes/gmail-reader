@@ -18,6 +18,7 @@ dependencies = [
     "rich",
     "python-dateutil",
     "pydantic==2.11.4",
+    "beautifulsoup4==4.13.4"
 ]
 readme = "README.md"
 classifiers = [

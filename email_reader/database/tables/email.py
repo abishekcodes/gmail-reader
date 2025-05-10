@@ -10,6 +10,7 @@ from sqlalchemy import Text, func, select
 from sqlalchemy.orm import Mapped, mapped_column, Session
 
 from email_reader.database.base import Base
+from bs4 import BeautifulSoup
 
 
 class MailBox(Enum):
@@ -56,6 +57,7 @@ class Email(Base):
 
     @classmethod
     def from_email_message(cls, email_message: EmailMessage, msg_id: str, labels: List[str]):
+
         if email_message.is_multipart():
             for part in email_message.walk():
                 content_type = part.get_content_type()
@@ -66,10 +68,22 @@ class Email(Base):
                 if content_type == "text/plain":
                     body = part.get_payload(decode=True).decode()  # type: ignore
                 elif content_type == "text/html":
-                    body = part.get_payload(decode=True).decode()  # type: ignore
+                    body = "\n".join(
+                        BeautifulSoup(
+                            part.get_payload(decode=True).decode(), "html.parser"
+                        ).stripped_strings
+                    )
+
         else:
             content_type = email_message.get_content_type()
-            body = email_message.get_payload(decode=True).decode()  # type: ignore
+            if content_type == "text/html":
+                body = "\n".join(
+                    BeautifulSoup(
+                        email_message.get_payload(decode=True).decode(), "html.parser"
+                    ).stripped_strings
+                )
+            else:
+                body = email_message.get_payload(decode=True).decode()
 
         from_name, from_email = parseaddr(email_message['From'])
         to_name, to_email = parseaddr(email_message['To'])
