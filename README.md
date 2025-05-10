@@ -18,14 +18,15 @@ https://console.cloud.google.com/projectcreate
 2. Come back to your [gcp console](https://console.cloud.google.com/auth/scopes)
 3. Click on Data Access Tab
 4. Click Add Or Remove Scopes Button
-5. In Filter Type Gmail API and Select the Read Only Permissions
+5. In Filter Type Gmail API and Select the /auth/gmail.modify Permission
 6. Scroll Down to Restricted Scopes Section and Click on Save
    
 ![alt text](email_reader/assets/oauth-client-create-3.png)
 
 ### Add Test User
 1. Click on Audience
-2. Scroll Down and go to the Test Users Section and 3. Click on Add Users
+2. Scroll Down and go to the Test Users Section
+3. Click on Add Users
 4. Enter Your Email ID and Click Save
 ![alt text](email_reader/assets/oauth-client-create-4.png)
 

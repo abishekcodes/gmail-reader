@@ -8,13 +8,14 @@ from email import message, message_from_bytes
 from enum import Enum
 from pathlib import Path
 from types import SimpleNamespace
-from typing import List, Optional, Any, cast
+from typing import Any, List, Optional, cast
 
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 
 from email_reader.console import console
-from email_reader.database.tables.email import Email, MailBox
 from email_reader.database.engine import SessionFactory
+from email_reader.database.tables.email import Email, MailBox
 from email_reader.services.gauth import GoogleAuth, MockGoogleAuth
 
 
@@ -56,16 +57,28 @@ class GmailService:
     def alter_email_read_state(
             self, msg_id: str, action: EmailAction) -> tuple[bool, Optional[str]]:
 
+        email = None
+
+        with SessionFactory() as session:
+            email = session.get(Email, msg_id)
+            if not email:
+                return False, "EmailNotFound"
+
         add_label_id, remove_label_id = [], []
         if action == EmailAction.MarkAsRead:
             remove_label_id = ['UNREAD']
         elif action == EmailAction.MarkAsUnread:
             add_label_id = ['UNREAD']
 
-        message = self._service.users().messages().modify(
-            userId='me', id=msg_id,
-            body=dict(addLabelIds=add_label_id, removeLabelIds=remove_label_id)
-        ).execute()
+        try:
+            message = self._service.users().messages().modify(
+                userId='me', id=msg_id,
+                body=dict(addLabelIds=add_label_id, removeLabelIds=remove_label_id)
+            ).execute()
+
+        except HttpError as e:
+            console.log(f"[red] When Altering Email {msg_id=}, {action=}, {email} {e} [/red]")
+            return False, str(e)
 
         if message:
             with SessionFactory() as session:
@@ -90,16 +103,21 @@ class GmailService:
                 return True, None
 
             if to_location not in movable_locations:
-                console.log(f"Cannot Move Email {msg_id} To Location {to_location}")
+                console.log(f"Cannot Move Email {msg_id} To Location {to_location}, {current_email}")
                 return False, "CannotMoveEmail"
 
-            if to_location == MailBox.Trash:
-                message = self._service.users().messages().trash(userId='me', id=msg_id).execute()
-            else:
-                message = self._service.users().messages().modify(
-                    userId='me', id=msg_id,
-                    body=dict(addLabelIds=[to_location.value], removeLabelIds=[current_email.mailbox.value])
-                ).execute()
+            try:
+                if to_location == MailBox.Trash:
+                    message = self._service.users().messages().trash(userId='me', id=msg_id).execute()
+                else:
+                    message = self._service.users().messages().modify(
+                        userId='me', id=msg_id,
+                        body=dict(addLabelIds=[to_location.value], removeLabelIds=[current_email.mailbox.value])
+                    ).execute()
+
+            except HttpError as e:
+                console.log(f"[red] When Moving Message {msg_id=}, {to_location=}, {current_email} {e} [/red]")
+                return False, str(e)
 
             if message:
                 session.query(Email).filter(Email.id == message['id']).update({Email.mailbox: to_location})

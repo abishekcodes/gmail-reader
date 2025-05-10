@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Literal, Optional, Type, cast
 
+from dateutil.relativedelta import relativedelta
 from pydantic import BaseModel, model_validator
 from sqlalchemy.types import DateTime, String
 
@@ -31,7 +33,34 @@ class DatetimeFilters(Enum):
 
     def get_statement(self, model: Type[Base], field_name: str, field_value: str):
         field = getattr(model, field_name)
-        return getattr(field, self.value)(field_value)
+        return getattr(field, self.value)(self.field_value_parser(field_value))
+
+    @classmethod
+    def field_value_parser(cls, field_value: str) -> datetime.datetime:
+        now = datetime.datetime.now()
+
+        if field_value.endswith('d') or field_value.endswith('days'):
+            dt = now - relativedelta(days=int(field_value.split('d')[0].strip()))
+        elif field_value.endswith('m') or field_value.endswith('months'):
+            dt = now - relativedelta(months=int(field_value.split('m')[0].strip()))
+        else:
+            try:
+                dt = datetime.datetime.strptime("%Y-%m-%dT%H:%M:%S", field_value)
+            except ValueError:
+                pass
+
+        if not dt:
+            err = (
+                'Invalid Format for Day\n'
+                'Supported Formats are\n'
+                '\t{number}-d (OR) {number} days for days\n'
+                '\t{number}-m for months (OR) {number} months\n'
+                '\t%Y-%m-%dT%H:%M:%S for exact timestamp\n'
+                'Refer the Rules.md file for more details'
+            )
+            raise ValueError(err)
+
+        return dt
 
 
 class FilterCondition(BaseModel):
@@ -42,7 +71,7 @@ class FilterCondition(BaseModel):
         value: str
 
         @model_validator(mode='before')
-        def parse_predicate(cls, data: dict) -> dict:
+        def parse_rule(cls, data: dict) -> dict:
             field_name = data['field']
             filter_string = data['predicate']
             from email_reader.database.tables.email import Email
@@ -56,6 +85,8 @@ class FilterCondition(BaseModel):
                     raise ValueError(
                         f"Filter Condition {filter_string} not support for String, Use {avalable_filters}"
                     )
+
+                DatetimeFilters.field_value_parser(data['value'])
 
             elif isinstance(field.type, DateTime):
                 try:

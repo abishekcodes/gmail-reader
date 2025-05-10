@@ -2,9 +2,8 @@
 
 Your rules file must be a JSON-serializable object matching the top-level Pydantic model:
 
-```yaml
-Rules:
-  rules: FilterRule[]
+```json
+  {"rules": FilterRule[]}
 ```
 
 ### 1. Top-Level: `Rules`
@@ -30,28 +29,36 @@ Rules:
 
 #### 3.1. `FilterCondition.Rule`
 
-| Property    | Type                                        | Description                                                                                                          |
-| ----------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `field`     | `string`                                    | Name of an `Email` model attribute: e.g. `subject`, `from_email`, `date`, etc.                                       |
-| `predicate` | `StringFilters` \| `DatetimeFilters`        | Which comparison to perform (see below).                                                                              |
-| `value`     | `string`                                    | The literal to compare against. For dates, use ISO-8601 format.                                                      |
+| Property    | Type                                          | Description                                                                                                                                       |
+| ----------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `field`     | `string`                                      | The name of an `Email` model attribute to filter on. Examples: `subject`, `from_email`, `date`, `read`, `mailbox`, etc.                            |
+| `predicate` | `StringFilters` \| `DatetimeFilters`          | The comparison operator to use. (see below)
 
-##### Allowed `StringFilters`
+
+##### Allowed `StringFilters` predicate
 - `Contains`  
 - `DoesNotContain`  
 - `Equals`  
-- `DoesNotEqual`  
+- `DoesNotEqual`
 
-##### Allowed `DatetimeFilters`
+>any text (e.g. `"Invoice"`, `"alerts@example.com"`)  
+
+##### Allowed `DatetimeFilters` predicate
 - `GreaterThan`  
 - `LessThan`  
+The literal value to compare against.  
+- **For strings**: 
+- **For dates**: one of:  
+  - Relative days: `7d` or `7 days`  
+  - Relative months: `2m` or `2 months`  
+  - Exact datetime string: `2025-05-10T14:30:00` (ISO 8601)                                            |
 
 ### 4. `FilterAction`
 
 | Property | Type                | Description                                                                                               |
 | -------- | ------------------- | --------------------------------------------------------------------------------------------------------- |
-| `type`   | `EmailAction`       | What action to perform: `MarkAsRead`, `MarkAsUnread`, `MoveMessage`                                       |
-| `folder` | `MailBox` (optional) | Required only when `type: MoveMessage`. One of: `Inbox`, `Trash`, `Spam`, `Sent`, `Draft`.                 |
+| `type`   | `EmailAction`       | What action to perform: `mark_as_read`, `mark_as_unread`, `move_message`                                       |
+| `folder` | `MailBox` (optional) | Required only when `type: move_message`. One of: `INBOX`, `TRASH`, `SPAM`. Sent Items or Drafts can only be moved to trash. Emails from Inbox can be marked as spam               |
 
 ### 5. Examples
 
@@ -59,17 +66,17 @@ Rules:
 {
   "rules": [
     {
-      "name": "Archive old newsletters",
+      "name": "Archive old newsletters Older than 1 month",
       "conditions": {
         "operator": "ALL",
         "rules": [
           { "field": "from_email", "predicate": "Equals", "value": "newsletter@example.com" },
-          { "field": "date",       "predicate": "LessThan", "value": "2025-01-01T00:00:00" }
+          { "field": "date",       "predicate": "LessThan", "value": "1m" }
         ]
       },
       "actions": [
-        { "type": "MoveMessage", "folder": "Trash" },
-        { "type": "MarkAsRead" }
+        { "type": "move_message", "folder": "Trash" },
+        { "type": "mark_as_read" }
       ]
     },
     {
@@ -82,7 +89,7 @@ Rules:
         ]
       },
       "actions": [
-        { "type": "MarkAsUnread" }
+        { "type": "mark_as_unread" }
       ]
     }
   ]

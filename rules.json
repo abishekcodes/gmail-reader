@@ -6,20 +6,15 @@
                 "operator": "ANY",
                 "rules": [
                     {
-                        "field": "body",
-                        "predicate": "Contains",
-                        "value": "alert"
-                    },
-                    {
-                        "field": "from_email",
-                        "predicate": "Contains",
-                        "value": "hotmail"
+                        "field": "date",
+                        "predicate": "LessThan",
+                        "value": "2 days"
                     }
                 ]
             },
             "actions": [
                 {
-                    "type": "mark_as_unread"
+                    "type": "mark_as_read"
                 }
             ]
         }
