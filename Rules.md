@@ -41,7 +41,15 @@ Your rules file must be a JSON-serializable object matching the top-level Pydant
 - `Equals`  
 - `DoesNotEqual`
 
->any text (e.g. `"Invoice"`, `"alerts@example.com"`)  
+>any text (e.g. `"Invoice"`, `"alerts@example.com"`)
+
+##### Supported `fields` for StringFilters
+- **`from_name`:** The Name of the Sender *(May/May Not be available)*
+- **`from_email`:** The Email Id of the Sender
+- **`to_name`:** The Name of the Reciever *(May/May Not be available)*
+- **`to_email`:** The Email Id of the Reciever
+- **`subject`:** Subject of the Email
+- **`body`:** Body of the Email
 
 ##### Allowed `DatetimeFilters` predicate
 - `GreaterThan`  
@@ -51,7 +59,9 @@ The literal value to compare against.
 - **For dates**: one of:  
   - Relative days: `7d` or `7 days`  
   - Relative months: `2m` or `2 months`  
-  - Exact datetime string: `2025-05-10T14:30:00` (ISO 8601)                                            |
+  - Exact datetime string: `2025-05-10T14:30:00` (ISO 8601)
+##### Supported `fields` for DatetimeFilters
+- **`date`:** Date at which the mail was receieved (inboxes) / last updated (sent or drafts)
 
 ### 4. `FilterAction`
 
