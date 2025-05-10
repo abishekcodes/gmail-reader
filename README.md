@@ -5,12 +5,14 @@ https://console.cloud.google.com/projectcreate
 
 ### Create Your OAuth Client
 1. Head over to [OAuth Client Page](https://console.cloud.google.com/auth/clients)
-2. Click on Create Client
-![alt text](email_reader/assets/oauth-client-create-1.png)
-3. Select Application Type as Desktop App and Name Your File as Email Reader
-4. Click Ok
-5. In The Popup that appears Click on Download JSON to download the secrets file, Rename the file as credentials.json and store it in your computer
-![alt text](email_reader/assets/oauth-client-create-2.png)
+2. Click on Create 
+<div align="center"> <img src="email_reader/assets/oauth-client-create-1.png" alt="OAuth Client Create - Step 1" width="40%"/> </div>
+   
+4. Select Application Type as Desktop App and Name Your File as Email Reader
+5. Click Ok
+6. In The Popup that appears Click on Download JSON to download the secrets file, Rename the file as credentials.json and store it in your computer
+<div align="center"> <img src="email_reader/assets/oauth-client-create-2.png" alt="OAuth Client Create - Step 2" width="40%"/> </div>
+
 
 
 ### Enable the Gmail API for Your Google Cloud Application
@@ -19,16 +21,16 @@ https://console.cloud.google.com/projectcreate
 3. Click on Data Access Tab
 4. Click Add Or Remove Scopes Button
 5. In Filter Type Gmail API and Select the /auth/gmail.modify Permission
-6. Scroll Down to Restricted Scopes Section and Click on Save
-   
-![alt text](email_reader/assets/oauth-client-create-3.png)
+6. Scroll Down to Restricted Scopes Section and Click on Save   
+<div align="center"> <img src="email_reader/assets/oauth-client-create-3.png" alt="OAuth Client Create - Step 3" width="80%"/> </div>
+
 
 ### Add Test User
 1. Click on Audience
 2. Scroll Down and go to the Test Users Section
 3. Click on Add Users
 4. Enter Your Email ID and Click Save
-![alt text](email_reader/assets/oauth-client-create-4.png)
+<div align="center"> <img src="email_reader/assets/oauth-client-create-4.png" alt="OAuth Client Create - Step 4" width="60%"/> </div>
 
 
 # Setting Up The Project
