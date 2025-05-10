@@ -31,34 +31,45 @@ Your rules file must be a JSON-serializable object matching the top-level Pydant
 
 | Property    | Type                                          | Description                                                                                                                                       |
 | ----------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `field`     | `string`                                      | The name of an `Email` model attribute to filter on. Examples: `subject`, `from_email`, `date`, `read`, `mailbox`, etc.                            |
+| `field`     | `string`                                      | The name of an `Email` model attribute to filter on. (see below)                            |
 | `predicate` | `StringFilters` \| `DatetimeFilters`          | The comparison operator to use. (see below)
 
 
-##### Allowed `StringFilters` predicate
-- `Contains`  
-- `DoesNotContain`  
-- `Equals`  
-- `DoesNotEqual`
+##### Allowed StringFilters `predicate`
+- `"Contains"`  
+- `"DoesNotContain"`  
+- `"Equals"`  
+- `"DoesNotEqual"`
 
->any text (e.g. `"Invoice"`, `"alerts@example.com"`)  
+The literal value to compare against.
+- **For string**:
+  - any text (e.g. `"Invoice"`, `"alerts@example.com"`)
+
+##### Supported `fields` for StringFilters
+- **`from_name`:** The Name of the Sender *(May/May Not be available)*
+- **`from_email`:** The Email Id of the Sender
+- **`to_name`:** The Name of the Reciever *(May/May Not be available)*
+- **`to_email`:** The Email Id of the Reciever
+- **`subject`:** Subject of the Email
+- **`body`:** Body of the Email
 
 ##### Allowed `DatetimeFilters` predicate
 - `GreaterThan`  
 - `LessThan`  
 The literal value to compare against.  
-- **For strings**: 
 - **For dates**: one of:  
-  - Relative days: `7d` or `7 days`  
-  - Relative months: `2m` or `2 months`  
-  - Exact datetime string: `2025-05-10T14:30:00` (ISO 8601)                                            |
+  - Relative days: `"7d"` or `"7 days"`  
+  - Relative months: `"2m"` or `"2 months"`  
+  - Exact datetime string: `"2025-05-10T14:30:00"` (ISO 8601)
+##### Supported `fields` for DatetimeFilters
+- **`date`:** Date at which the mail was receieved (inboxes) / last updated (sent or drafts)
 
 ### 4. `FilterAction`
 
 | Property | Type                | Description                                                                                               |
 | -------- | ------------------- | --------------------------------------------------------------------------------------------------------- |
-| `type`   | `EmailAction`       | What action to perform: `mark_as_read`, `mark_as_unread`, `move_message`                                       |
-| `folder` | `MailBox` (optional) | Required only when `type: move_message`. One of: `INBOX`, `TRASH`, `SPAM`. Sent Items or Drafts can only be moved to trash. Emails from Inbox can be marked as spam               |
+| `type`   | `EmailAction`       | What action to perform: `"mark_as_read"`, `"mark_as_unread"`, `"move_message"`                                       |
+| `folder` | `MailBox` (optional) | Required only when `type: move_message`. One of: `"INBOX"`, `"TRASH"`, `"SPAM"`. Sent Items or Drafts can only be moved to trash. Emails from Inbox can be marked as spam               |
 
 ### 5. Examples
 
@@ -75,8 +86,7 @@ The literal value to compare against.
         ]
       },
       "actions": [
-        { "type": "move_message", "folder": "Trash" },
-        { "type": "mark_as_read" }
+        { "type": "move_message", "folder": "TRASH" },
       ]
     },
     {
